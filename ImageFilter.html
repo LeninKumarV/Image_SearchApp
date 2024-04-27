@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      * {
+        padding: 0%;
+        margin: 0%;
+        box-sizing: border-box;
+      }
+      .filter {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        row-gap: 30px;
+      }
+
+      #images {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: wrap;
+        row-gap: 20px;
+      }
+      .image {
+        border: 1px solid #333;
+        padding-bottom: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .image a{
+        text-decoration: none;
+      }
+      #images .image img {
+        width: 400px;
+        height: 200px;
+      }
+      h1{
+        font-weight: bold;
+        color: rosybrown;
+      }
+      input{
+        width: 200px;
+        height: 30px;
+    }
+    #search-btn{
+        width: 80px;
+        height: 30px;
+        background-color: transparent;
+        background-color: greenyellow;
+        border: 1px solid black;
+    }
+    #delete{
+        width: 80px;
+        height: 30px;
+        background-color: transparent;
+        background-color: tomato;
+        border: 1px solid black;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="filter">
+      <h1>Image Filter</h1>
+      <div class="search">
+        <form action="">
+            <input
+            type="text"
+            name="search"
+            id="input"
+            placeholder="Search here..."
+          />
+         <button id="search-btn">Search</button> 
+         <button id="delete">Delete</button>
+        </form>
+      </div>
+
+      <div id="images">
+      
+      </div>
+    </div>
+
+    <script>
+      const container = document.getElementById("images");
+      const input = document.getElementById("input");
+    //const search = document.querySelector("form");
+      const search = document.getElementById("search-btn");
+      const deleteData=document.getElementById("delete");
+
+      const acessKey = "tFCcUbbUGiQvg5YxIupyhAyn7TQaETWIW8s-pabMEkk";
+      let page = 1;
+      let data ="";
+      search.addEventListener("click", (e) => {
+        e.preventDefault();
+        console.log(data);
+       fetchApi();
+    });
+
+      deleteData.addEventListener("click",()=>{
+        data="";
+        fetchApi();
+        console.log("delted")
+      });
+
+      async function fetchApi() {
+        data=input.value;       
+        console.log(data)
+        const url = `https://api.unsplash.com/search/photos?page=${page}&query=${data}&client_id=${acessKey}`;
+        const request = await fetch(url);
+        const response = await request.json();
+        console.log(response)
+        const result = response.results;
+
+        result.map((r) => {
+          const imageWrapper = document.createElement("div");
+          imageWrapper.classList.add("image");
+          const img = document.createElement("img");
+          img.src = r.urls.small;
+          img.alt = r.alt_description;
+          const a= document.createElement("a");
+          const text = r.alt_description;
+          a.textContent = text.length > 50 ? text.slice(0, 50) + " ..." : text;
+          a.href=r.links.html;
+          imageWrapper.append(img);
+          imageWrapper.append(a);
+          container.append(imageWrapper);
+        });
+      }
+    </script>
+  </body>
+</html>
